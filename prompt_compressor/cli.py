@@ -6,6 +6,12 @@ from .core.compressor import PromptCompressor
 
 app = typer.Typer()
 
+# Falls back to the rules.yaml shipped alongside the project, so --rules
+# only needs to be passed when you want to use a different rules file.
+DEFAULT_RULES_FILE = Path(__file__).resolve().parent.parent / "rules.yaml"
+if not DEFAULT_RULES_FILE.exists():
+    DEFAULT_RULES_FILE = None
+
 def print_stats(result: dict, show_verbose: bool = False):
     """Print compression statistics in a formatted way"""
     print("\n=== Compression Statistics ===")
@@ -22,7 +28,7 @@ def print_stats(result: dict, show_verbose: bool = False):
 @app.command()
 def compress(
     prompt: str = typer.Argument(..., help="The prompt to compress"),
-    rules_file: Optional[Path] = typer.Option(None, "--rules", "-r", help="Path to rules YAML file"),
+    rules_file: Optional[Path] = typer.Option(DEFAULT_RULES_FILE, "--rules", "-r", help="Path to rules YAML file"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Path to save results as JSON"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed output including original and compressed text"),
     stats: bool = typer.Option(False, "--stats", "-s", help="Show compression statistics")
@@ -71,7 +77,7 @@ def compress(
 @app.command()
 def analyze(
     prompt: str = typer.Argument(..., help="The prompt to analyze"),
-    rules_file: Optional[Path] = typer.Option(None, "--rules", "-r", help="Path to rules YAML file"),
+    rules_file: Optional[Path] = typer.Option(DEFAULT_RULES_FILE, "--rules", "-r", help="Path to rules YAML file"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed analysis")
 ):
     """Analyze a prompt for compression opportunities"""
@@ -81,4 +87,4 @@ def analyze(
     print_stats(result, show_verbose=verbose)
 
 def main():
-    app() 
+    app()

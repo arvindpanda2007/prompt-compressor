@@ -1,5 +1,8 @@
+from prompt_compressor.cli import app
+
+
 def main():
-    print("Hello from prompt-compressor!")
+    app()
 
 
 if __name__ == "__main__":
